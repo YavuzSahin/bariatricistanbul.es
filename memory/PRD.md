@@ -42,10 +42,24 @@ Build a landing page for Bariatric Istanbul to collect patient information (name
 - [x] Glass-morphism effects
 - [x] Professional typography (Playfair Display + Outfit)
 - [x] FontAwesome icons throughout
-- [x] Before/After comparison sliders with drag functionality
-- [x] Mobile-responsive sliders for Gallery, Testimonials, Videos
+- [x] Slick carousel for Transformations (show 3, scroll 1)
+- [x] Slick carousel for Testimonials (show 3, scroll 1)
+- [x] Slick carousel for Video Stories (show 3, scroll 1)
 - [x] Video testimonial modal with demo video player
 - [x] "Get Quote" WhatsApp buttons on procedures (no prices)
+- [x] Itinerary section with Day 1-6 timeline
+- [x] **Admin Panel CMS** at /admin
+  - JWT authentication
+  - Manage Transformations (CRUD)
+  - Manage Testimonials (CRUD)
+  - Manage Video Stories (CRUD)
+  - Manage Itinerary Days (CRUD)
+  - Default content seeded on startup
+
+## Admin Credentials
+- URL: /admin
+- Email: admin@bariatricistanbul.com
+- Password: admin123
 
 ## Tech Stack
 - React (frontend)
