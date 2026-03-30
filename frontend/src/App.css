@@ -237,7 +237,7 @@ html {
 /* Slick Slider Custom Styles */
 .slick-slider-container {
     position: relative;
-    padding: 0 40px;
+    padding: 0 50px;
 }
 
 .slick-slider-container .slick-list {
@@ -262,17 +262,18 @@ html {
     top: 50%;
     transform: translateY(-50%);
     z-index: 10;
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     background: #27272a;
-    border: 1px solid #3f3f46;
+    border: 2px solid #3f3f46;
     color: #a1a1aa;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
+    font-size: 20px;
 }
 
 .slick-custom-arrow:hover {
@@ -282,11 +283,11 @@ html {
 }
 
 .slick-custom-arrow.slick-prev {
-    left: 0;
+    left: -10px;
 }
 
 .slick-custom-arrow.slick-next {
-    right: 0;
+    right: -10px;
 }
 
 .slick-custom-arrow.slick-disabled {
@@ -328,19 +329,20 @@ html {
 
 @media (max-width: 640px) {
     .slick-slider-container {
-        padding: 0 10px;
+        padding: 0 15px;
     }
     
     .slick-custom-arrow {
-        width: 32px;
-        height: 32px;
+        width: 44px;
+        height: 44px;
+        font-size: 16px;
     }
     
     .slick-custom-arrow.slick-prev {
-        left: -5px;
+        left: -8px;
     }
     
     .slick-custom-arrow.slick-next {
-        right: -5px;
+        right: -8px;
     }
 }

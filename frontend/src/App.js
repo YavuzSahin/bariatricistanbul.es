@@ -534,16 +534,16 @@ const VideoTestimonialsSection = () => {
           <Slider {...settings}>
             {videos.map((video, index) => (
               <div key={video.id} className="px-3">
-                <div className="relative aspect-video bg-zinc-800 rounded-2xl overflow-hidden group cursor-pointer card-hover" onClick={() => setActiveVideo(video)} data-testid={`video-testimonial-${index}`}>
+                <div className="relative aspect-[4/5] bg-zinc-800 rounded-2xl overflow-hidden group cursor-pointer card-hover" onClick={() => setActiveVideo(video)} data-testid={`video-testimonial-${index}`}>
                   <img src={video.thumbnail_url} alt={video.title} className="w-full h-full object-cover" />
                   <div className="video-overlay absolute inset-0 flex items-center justify-center">
-                    <div className="w-16 h-16 bg-gold rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <FAIcon icon="fas fa-play" className="text-zinc-950 text-xl ml-1" />
+                    <div className="w-20 h-20 bg-gold rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <FAIcon icon="fas fa-play" className="text-zinc-950 text-2xl ml-1" />
                     </div>
                   </div>
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <p className="text-zinc-50 font-medium">{video.title}</p>
-                    <p className="text-zinc-400 text-sm">{video.duration}</p>
+                  <div className="absolute bottom-6 left-6 right-6">
+                    <p className="text-zinc-50 font-medium text-lg">{video.title}</p>
+                    <p className="text-zinc-400">{video.duration}</p>
                   </div>
                 </div>
               </div>
