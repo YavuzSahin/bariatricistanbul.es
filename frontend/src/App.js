@@ -82,11 +82,12 @@ const Navigation = () => {
 
           {/* Mobile Menu Button */}
           <button 
-            className="lg:hidden text-zinc-50"
+            className="lg:hidden text-zinc-50 p-2 -mr-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             data-testid="mobile-menu-btn"
+            aria-label="Toggle menu"
           >
-            <FAIcon icon={mobileMenuOpen ? "fas fa-times" : "fas fa-bars"} className="text-2xl" />
+            <FAIcon icon={mobileMenuOpen ? "fas fa-times" : "fas fa-bars"} className="text-xl" />
           </button>
         </div>
       </div>
@@ -886,17 +887,17 @@ const VideoTestimonialsSection = () => {
         {/* Video Modal */}
         {activeVideo !== null && (
           <div 
-            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4"
             onClick={closeVideo}
             data-testid="video-modal"
           >
             <div className="relative w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
               <button 
                 onClick={closeVideo}
-                className="absolute -top-12 right-0 text-white hover:text-gold transition-colors"
+                className="absolute -top-12 right-0 w-10 h-10 flex items-center justify-center text-white hover:text-gold transition-colors bg-zinc-800 rounded-full"
                 data-testid="video-modal-close"
               >
-                <FAIcon icon="fas fa-times" className="text-2xl" />
+                <FAIcon icon="fas fa-times" className="text-xl" />
               </button>
               <video 
                 src={DEMO_VIDEO_URL}

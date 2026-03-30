@@ -32,6 +32,7 @@ Build a landing page for Bariatric Istanbul to collect patient information (name
 ## What's Been Implemented (Dec 2024)
 - [x] Full landing page with all 10+ sections
 - [x] Lead capture form with validation
+- [x] International phone input with country flags (react-international-phone)
 - [x] Form POST to CRM endpoint
 - [x] WhatsApp floating CTA with pulse animation
 - [x] Responsive mobile design with hamburger menu
@@ -40,6 +41,11 @@ Build a landing page for Bariatric Istanbul to collect patient information (name
 - [x] FAQ accordion
 - [x] Glass-morphism effects
 - [x] Professional typography (Playfair Display + Outfit)
+- [x] FontAwesome icons throughout
+- [x] Before/After comparison sliders with drag functionality
+- [x] Mobile-responsive sliders for Gallery, Testimonials, Videos
+- [x] Video testimonial modal with demo video player
+- [x] "Get Quote" WhatsApp buttons on procedures (no prices)
 
 ## Tech Stack
 - React (frontend)
