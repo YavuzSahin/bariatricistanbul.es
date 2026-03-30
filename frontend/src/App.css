@@ -233,3 +233,114 @@ html {
     background: rgba(9, 9, 11, 0.98);
     backdrop-filter: blur(24px);
 }
+
+/* Slick Slider Custom Styles */
+.slick-slider-container {
+    position: relative;
+    padding: 0 40px;
+}
+
+.slick-slider-container .slick-list {
+    overflow: hidden;
+}
+
+.slick-slider-container .slick-track {
+    display: flex;
+    align-items: stretch;
+}
+
+.slick-slider-container .slick-slide {
+    height: auto;
+}
+
+.slick-slider-container .slick-slide > div {
+    height: 100%;
+}
+
+.slick-custom-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #27272a;
+    border: 1px solid #3f3f46;
+    color: #a1a1aa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.slick-custom-arrow:hover {
+    background: #D4AF37;
+    border-color: #D4AF37;
+    color: #09090b;
+}
+
+.slick-custom-arrow.slick-prev {
+    left: 0;
+}
+
+.slick-custom-arrow.slick-next {
+    right: 0;
+}
+
+.slick-custom-arrow.slick-disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.slick-slider-container .slick-dots {
+    position: relative;
+    bottom: 0;
+    margin-top: 24px;
+    display: flex !important;
+    justify-content: center;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+}
+
+.slick-slider-container .slick-dots li {
+    margin: 0;
+}
+
+.slick-slider-container .slick-dots li button {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #3f3f46;
+    border: none;
+    padding: 0;
+    font-size: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.slick-slider-container .slick-dots li.slick-active button {
+    background: #D4AF37;
+    transform: scale(1.2);
+}
+
+@media (max-width: 640px) {
+    .slick-slider-container {
+        padding: 0 10px;
+    }
+    
+    .slick-custom-arrow {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .slick-custom-arrow.slick-prev {
+        left: -5px;
+    }
+    
+    .slick-custom-arrow.slick-next {
+        right: -5px;
+    }
+}
