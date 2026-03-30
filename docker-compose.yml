@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: bariatric-mongodb
+    restart: always
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - bariatric-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bariatric-backend
+    restart: always
+    ports:
+      - "8001:8001"
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017
+      - DB_NAME=bariatric_istanbul
+      - CORS_ORIGINS=https://yourdomain.com,http://localhost:3000
+      - JWT_SECRET=${JWT_SECRET:-change-this-to-a-secure-random-string}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@bariatricistanbul.com}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+    depends_on:
+      - mongodb
+    networks:
+      - bariatric-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL:-http://localhost:8001}
+    container_name: bariatric-frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - bariatric-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  bariatric-network:
+    driver: bridge
