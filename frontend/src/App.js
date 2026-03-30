@@ -23,6 +23,14 @@ const Navigation = () => {
     { href: "#faq", label: "FAQ" },
   ];
 
+  const scrollToSection = (e, href) => {
+    e.preventDefault();
+    const element = document.querySelector(href);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-zinc-950/70 backdrop-blur-2xl border-b border-white/5">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
@@ -37,6 +45,7 @@ const Navigation = () => {
               <a 
                 key={link.href}
                 href={link.href} 
+                onClick={(e) => scrollToSection(e, link.href)}
                 className="nav-link text-zinc-400 hover:text-zinc-50 text-sm font-medium transition-colors"
               >
                 {link.label}
@@ -83,8 +92,8 @@ const Navigation = () => {
               <a 
                 key={link.href}
                 href={link.href} 
+                onClick={(e) => { scrollToSection(e, link.href); setMobileMenuOpen(false); }}
                 className="block text-zinc-400 hover:text-zinc-50 py-2"
-                onClick={() => setMobileMenuOpen(false)}
               >
                 {link.label}
               </a>
