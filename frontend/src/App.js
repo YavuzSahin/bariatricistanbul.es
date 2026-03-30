@@ -1,13 +1,20 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import "@/App.css";
-import { Phone, Mail, MapPin, ChevronDown, ChevronUp, Play, Star, Check, Menu, X, MessageCircle } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./components/ui/select";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./components/ui/accordion";
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
 
 const WHATSAPP_LINK = "https://wa.me/bariatric";
 const CRM_ENDPOINT = "https://crm.bariatricistanbul.com/action/addLeads";
+const DEMO_VIDEO_URL = "https://www.w3schools.com/html/mov_bbb.mp4";
+
+// FontAwesome Icon Component
+const FAIcon = ({ icon, className = "" }) => (
+  <i className={`${icon} ${className}`}></i>
+);
 
 // Navigation Component
 const Navigation = () => {
@@ -61,7 +68,7 @@ const Navigation = () => {
               className="btn-whatsapp px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2"
               data-testid="nav-whatsapp-btn"
             >
-              <MessageCircle className="w-4 h-4" />
+              <FAIcon icon="fab fa-whatsapp" className="text-base" />
               WhatsApp
             </a>
             <a 
@@ -79,7 +86,7 @@ const Navigation = () => {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             data-testid="mobile-menu-btn"
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <FAIcon icon={mobileMenuOpen ? "fas fa-times" : "fas fa-bars"} className="text-2xl" />
           </button>
         </div>
       </div>
@@ -171,15 +178,15 @@ const HeroSection = () => {
             </p>
             <div className="flex flex-wrap gap-6 mb-8">
               <div className="flex items-center gap-2">
-                <Check className="w-5 h-5 text-gold" />
+                <FAIcon icon="fas fa-check" className="text-gold" />
                 <span className="text-zinc-300">JCI Accredited Hospital</span>
               </div>
               <div className="flex items-center gap-2">
-                <Check className="w-5 h-5 text-gold" />
+                <FAIcon icon="fas fa-check" className="text-gold" />
                 <span className="text-zinc-300">5000+ Successful Surgeries</span>
               </div>
               <div className="flex items-center gap-2">
-                <Check className="w-5 h-5 text-gold" />
+                <FAIcon icon="fas fa-check" className="text-gold" />
                 <span className="text-zinc-300">All-Inclusive Packages</span>
               </div>
             </div>
@@ -193,7 +200,7 @@ const HeroSection = () => {
             {submitStatus === "success" ? (
               <div className="text-center py-8" data-testid="form-success-message">
                 <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Check className="w-8 h-8 text-green-500" />
+                  <FAIcon icon="fas fa-check" className="text-green-500 text-2xl" />
                 </div>
                 <h3 className="font-serif text-xl text-zinc-50 mb-2">Thank You!</h3>
                 <p className="text-zinc-400">We'll contact you within 24 hours.</p>
@@ -229,15 +236,15 @@ const HeroSection = () => {
                   required
                   data-testid="input-email"
                 />
-                <Input
-                  type="tel"
-                  placeholder="Phone Number (with country code)"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                  className="form-input h-12 rounded-lg"
-                  required
-                  data-testid="input-phone"
-                />
+                <div className="phone-input-wrapper">
+                  <PhoneInput
+                    defaultCountry="gb"
+                    value={formData.phone}
+                    onChange={(phone) => setFormData({...formData, phone: phone})}
+                    inputClassName="form-input"
+                    data-testid="input-phone"
+                  />
+                </div>
                 <Select
                   value={formData.language}
                   onValueChange={(value) => setFormData({...formData, language: value})}
@@ -284,6 +291,13 @@ const HeroSection = () => {
 
 // About Section
 const AboutSection = () => {
+  const stats = [
+    { number: "5000+", label: "Successful Surgeries", icon: "fas fa-trophy" },
+    { number: "98%", label: "Patient Satisfaction", icon: "fas fa-star" },
+    { number: "15+", label: "Years Experience", icon: "fas fa-calendar-alt" },
+    { number: "50+", label: "Countries Served", icon: "fas fa-globe" },
+  ];
+
   return (
     <section id="about" className="bg-zinc-950 py-24 md:py-32">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
@@ -299,18 +313,13 @@ const AboutSection = () => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { number: "5000+", label: "Successful Surgeries", icon: "🏆" },
-            { number: "98%", label: "Patient Satisfaction", icon: "⭐" },
-            { number: "15+", label: "Years Experience", icon: "📅" },
-            { number: "50+", label: "Countries Served", icon: "🌍" },
-          ].map((stat, index) => (
+          {stats.map((stat, index) => (
             <div 
               key={index}
               className="glass rounded-2xl p-8 text-center card-hover"
               data-testid={`stat-card-${index}`}
             >
-              <p className="text-4xl mb-2">{stat.icon}</p>
+              <FAIcon icon={stat.icon} className="text-gold text-3xl mb-4" />
               <p className="font-serif text-3xl text-gold mb-2">{stat.number}</p>
               <p className="text-zinc-400">{stat.label}</p>
             </div>
@@ -323,6 +332,14 @@ const AboutSection = () => {
 
 // Hospital Section
 const HospitalSection = () => {
+  const features = [
+    "JCI International Accreditation",
+    "Latest Laparoscopic Technology",
+    "Private VIP Patient Rooms",
+    "Dedicated International Patient Department",
+    "On-site Laboratory & Imaging",
+  ];
+
   return (
     <section id="hospital" className="bg-zinc-900 py-24 md:py-32">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
@@ -345,15 +362,9 @@ const HospitalSection = () => {
               in the heart of Istanbul, you'll experience premium care in a modern, comfortable environment.
             </p>
             <ul className="space-y-4">
-              {[
-                "JCI International Accreditation",
-                "Latest Laparoscopic Technology",
-                "Private VIP Patient Rooms",
-                "Dedicated International Patient Department",
-                "On-site Laboratory & Imaging",
-              ].map((item, index) => (
+              {features.map((item, index) => (
                 <li key={index} className="flex items-center gap-3 text-zinc-300">
-                  <Check className="w-5 h-5 text-gold flex-shrink-0" />
+                  <FAIcon icon="fas fa-check-circle" className="text-gold" />
                   {item}
                 </li>
               ))}
@@ -367,6 +378,12 @@ const HospitalSection = () => {
 
 // Surgeon Section
 const SurgeonSection = () => {
+  const credentials = [
+    "Member of IFSO (International Federation for Surgery of Obesity)",
+    "Board Certified General Surgeon",
+    "Fellowship in Minimally Invasive Surgery",
+  ];
+
   return (
     <section id="surgeon" className="bg-zinc-950 py-24 md:py-32">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
@@ -392,13 +409,9 @@ const SurgeonSection = () => {
               </div>
             </div>
             <ul className="space-y-3">
-              {[
-                "Member of IFSO (International Federation for Surgery of Obesity)",
-                "Board Certified General Surgeon",
-                "Fellowship in Minimally Invasive Surgery",
-              ].map((item, index) => (
+              {credentials.map((item, index) => (
                 <li key={index} className="flex items-start gap-3 text-zinc-300 text-sm">
-                  <Check className="w-4 h-4 text-gold flex-shrink-0 mt-0.5" />
+                  <FAIcon icon="fas fa-award" className="text-gold mt-0.5" />
                   {item}
                 </li>
               ))}
@@ -424,25 +437,25 @@ const ProceduresSection = () => {
       title: "Gastric Sleeve",
       description: "The most popular bariatric procedure. Removes 80% of the stomach to reduce appetite and food intake.",
       benefits: ["60-70% excess weight loss", "Short recovery time", "No foreign objects"],
-      price: "From €3,500"
+      icon: "fas fa-cut"
     },
     {
       title: "Gastric Bypass",
       description: "Creates a small stomach pouch and reroutes the digestive system for maximum weight loss.",
       benefits: ["70-80% excess weight loss", "Resolves type 2 diabetes", "Long-term results"],
-      price: "From €4,500"
+      icon: "fas fa-random"
     },
     {
       title: "Gastric Balloon",
       description: "Non-surgical option. A silicone balloon is placed in the stomach to reduce capacity.",
       benefits: ["No surgery required", "6-12 month placement", "15-20% weight loss"],
-      price: "From €2,500"
+      icon: "fas fa-circle"
     },
     {
       title: "Revision Surgery",
       description: "For patients who need correction or conversion of a previous bariatric procedure.",
       benefits: ["Customized approach", "Expert revision team", "Improved outcomes"],
-      price: "Custom Quote"
+      icon: "fas fa-redo"
     },
   ];
 
@@ -467,25 +480,27 @@ const ProceduresSection = () => {
               className="procedure-card rounded-2xl p-8 card-hover"
               data-testid={`procedure-card-${index}`}
             >
+              <FAIcon icon={procedure.icon} className="text-gold text-2xl mb-4" />
               <h3 className="font-serif text-2xl text-zinc-50 mb-3">{procedure.title}</h3>
               <p className="text-zinc-400 mb-4">{procedure.description}</p>
               <ul className="space-y-2 mb-6">
                 {procedure.benefits.map((benefit, i) => (
                   <li key={i} className="flex items-center gap-2 text-zinc-300 text-sm">
-                    <Check className="w-4 h-4 text-gold" />
+                    <FAIcon icon="fas fa-check" className="text-gold text-xs" />
                     {benefit}
                   </li>
                 ))}
               </ul>
-              <div className="flex items-center justify-between">
-                <p className="text-gold font-semibold">{procedure.price}</p>
-                <a 
-                  href="#contact" 
-                  className="text-zinc-400 hover:text-gold text-sm transition-colors"
-                >
-                  Learn More →
-                </a>
-              </div>
+              <a 
+                href={WHATSAPP_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-whatsapp inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium"
+                data-testid={`procedure-quote-btn-${index}`}
+              >
+                <FAIcon icon="fab fa-whatsapp" />
+                Get Quote
+              </a>
             </div>
           ))}
         </div>
@@ -494,14 +509,25 @@ const ProceduresSection = () => {
   );
 };
 
-// Before/After Gallery
+// Before/After Gallery Slider
 const GallerySection = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const sliderRef = useRef(null);
+
   const galleryItems = [
-    { before: "85kg lost", months: "12 months post-op" },
-    { before: "60kg lost", months: "18 months post-op" },
-    { before: "70kg lost", months: "10 months post-op" },
-    { before: "55kg lost", months: "14 months post-op" },
+    { before: "85kg lost", months: "12 months post-op", beforeImg: "https://images.unsplash.com/photo-1573879541250-58ae8b322b40?w=400", afterImg: "https://images.unsplash.com/photo-1759476598893-66c7cd9c31cd?w=400" },
+    { before: "60kg lost", months: "18 months post-op", beforeImg: "https://images.unsplash.com/photo-1573879541250-58ae8b322b40?w=400", afterImg: "https://images.unsplash.com/photo-1759476598893-66c7cd9c31cd?w=400" },
+    { before: "70kg lost", months: "10 months post-op", beforeImg: "https://images.unsplash.com/photo-1573879541250-58ae8b322b40?w=400", afterImg: "https://images.unsplash.com/photo-1759476598893-66c7cd9c31cd?w=400" },
+    { before: "55kg lost", months: "14 months post-op", beforeImg: "https://images.unsplash.com/photo-1573879541250-58ae8b322b40?w=400", afterImg: "https://images.unsplash.com/photo-1759476598893-66c7cd9c31cd?w=400" },
   ];
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % galleryItems.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + galleryItems.length) % galleryItems.length);
+  };
 
   return (
     <section id="results" className="bg-zinc-950 py-24 md:py-32">
@@ -517,26 +543,55 @@ const GallerySection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* Desktop Grid */}
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {galleryItems.map((item, index) => (
-            <div 
-              key={index}
-              className="gallery-item aspect-[3/4] bg-zinc-800 rounded-xl relative group"
-              data-testid={`gallery-item-${index}`}
-            >
-              <img 
-                src="https://images.unsplash.com/photo-1759476598893-66c7cd9c31cd"
-                alt={`Patient transformation ${index + 1}`}
-                className="w-full h-full object-cover rounded-xl"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent rounded-xl flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                <div>
-                  <p className="text-gold font-semibold">{item.before}</p>
-                  <p className="text-zinc-400 text-sm">{item.months}</p>
-                </div>
-              </div>
-            </div>
+            <BeforeAfterCard key={index} item={item} index={index} />
           ))}
+        </div>
+
+        {/* Mobile Slider */}
+        <div className="md:hidden relative">
+          <div className="overflow-hidden" ref={sliderRef}>
+            <div 
+              className="flex transition-transform duration-300 ease-in-out"
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+            >
+              {galleryItems.map((item, index) => (
+                <div key={index} className="w-full flex-shrink-0 px-2">
+                  <BeforeAfterCard item={item} index={index} />
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Slider Controls */}
+          <div className="flex justify-center items-center gap-4 mt-6">
+            <button 
+              onClick={prevSlide}
+              className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-gold transition-colors"
+              data-testid="gallery-prev-btn"
+            >
+              <FAIcon icon="fas fa-chevron-left" />
+            </button>
+            <div className="flex gap-2">
+              {galleryItems.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-2 h-2 rounded-full transition-colors ${currentSlide === index ? 'bg-gold' : 'bg-zinc-700'}`}
+                  data-testid={`gallery-dot-${index}`}
+                />
+              ))}
+            </div>
+            <button 
+              onClick={nextSlide}
+              className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-gold transition-colors"
+              data-testid="gallery-next-btn"
+            >
+              <FAIcon icon="fas fa-chevron-right" />
+            </button>
+          </div>
         </div>
 
         <div className="text-center mt-8">
@@ -549,8 +604,77 @@ const GallerySection = () => {
   );
 };
 
-// Testimonials Section
+// Before/After Card Component
+const BeforeAfterCard = ({ item, index }) => {
+  const [sliderPosition, setSliderPosition] = useState(50);
+
+  const handleSliderChange = (e) => {
+    setSliderPosition(e.target.value);
+  };
+
+  return (
+    <div 
+      className="relative aspect-[3/4] rounded-xl overflow-hidden bg-zinc-800"
+      data-testid={`gallery-item-${index}`}
+    >
+      {/* After Image (background) */}
+      <img 
+        src={item.afterImg}
+        alt="After"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      
+      {/* Before Image (clipped) */}
+      <div 
+        className="absolute inset-0 overflow-hidden"
+        style={{ width: `${sliderPosition}%` }}
+      >
+        <img 
+          src={item.beforeImg}
+          alt="Before"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ width: `${100 / (sliderPosition / 100)}%`, maxWidth: 'none' }}
+        />
+      </div>
+      
+      {/* Slider Line */}
+      <div 
+        className="absolute top-0 bottom-0 w-1 bg-gold z-10"
+        style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
+      >
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-gold rounded-full flex items-center justify-center">
+          <FAIcon icon="fas fa-arrows-alt-h" className="text-zinc-950 text-sm" />
+        </div>
+      </div>
+      
+      {/* Slider Input */}
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value={sliderPosition}
+        onChange={handleSliderChange}
+        className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20"
+        data-testid={`ba-slider-${index}`}
+      />
+      
+      {/* Labels */}
+      <div className="absolute top-4 left-4 bg-zinc-900/80 px-2 py-1 rounded text-xs text-zinc-300 z-10">Before</div>
+      <div className="absolute top-4 right-4 bg-zinc-900/80 px-2 py-1 rounded text-xs text-zinc-300 z-10">After</div>
+      
+      {/* Info Overlay */}
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 z-10">
+        <p className="text-gold font-semibold">{item.before}</p>
+        <p className="text-zinc-400 text-sm">{item.months}</p>
+      </div>
+    </div>
+  );
+};
+
+// Testimonials Slider
 const TestimonialsSection = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
   const testimonials = [
     {
       name: "Sarah M.",
@@ -570,7 +694,21 @@ const TestimonialsSection = () => {
       text: "I was nervous about having surgery abroad, but Bariatric Istanbul made me feel completely safe and cared for. The results speak for themselves - 60kg down!",
       rating: 5
     },
+    {
+      name: "David K.",
+      country: "Australia",
+      text: "Flying all the way from Australia was worth every mile. The quality of care, the facilities, and the results have been life-changing. Highly recommended!",
+      rating: 5
+    },
   ];
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % testimonials.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  };
 
   return (
     <section id="testimonials" className="bg-zinc-900 py-24 md:py-32">
@@ -582,38 +720,107 @@ const TestimonialsSection = () => {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {testimonials.map((testimonial, index) => (
-            <div 
-              key={index}
-              className="testimonial-card rounded-2xl p-8"
-              data-testid={`testimonial-card-${index}`}
-            >
-              <div className="flex gap-1 mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-[#D4AF37] text-[#D4AF37]" />
-                ))}
-              </div>
-              <p className="text-zinc-300 mb-6 leading-relaxed">"{testimonial.text}"</p>
-              <div>
-                <p className="text-zinc-50 font-medium">{testimonial.name}</p>
-                <p className="text-zinc-500 text-sm">{testimonial.country}</p>
-              </div>
-            </div>
+        {/* Desktop Grid */}
+        <div className="hidden md:grid md:grid-cols-3 gap-6">
+          {testimonials.slice(0, 3).map((testimonial, index) => (
+            <TestimonialCard key={index} testimonial={testimonial} index={index} />
           ))}
+        </div>
+
+        {/* Mobile Slider */}
+        <div className="md:hidden relative">
+          <div className="overflow-hidden">
+            <div 
+              className="flex transition-transform duration-300 ease-in-out"
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+            >
+              {testimonials.map((testimonial, index) => (
+                <div key={index} className="w-full flex-shrink-0 px-2">
+                  <TestimonialCard testimonial={testimonial} index={index} />
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Slider Controls */}
+          <div className="flex justify-center items-center gap-4 mt-6">
+            <button 
+              onClick={prevSlide}
+              className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-gold transition-colors"
+              data-testid="testimonial-prev-btn"
+            >
+              <FAIcon icon="fas fa-chevron-left" />
+            </button>
+            <div className="flex gap-2">
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-2 h-2 rounded-full transition-colors ${currentSlide === index ? 'bg-gold' : 'bg-zinc-700'}`}
+                  data-testid={`testimonial-dot-${index}`}
+                />
+              ))}
+            </div>
+            <button 
+              onClick={nextSlide}
+              className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-gold transition-colors"
+              data-testid="testimonial-next-btn"
+            >
+              <FAIcon icon="fas fa-chevron-right" />
+            </button>
+          </div>
         </div>
       </div>
     </section>
   );
 };
 
-// Video Testimonials Section
+// Testimonial Card
+const TestimonialCard = ({ testimonial, index }) => (
+  <div 
+    className="testimonial-card rounded-2xl p-8"
+    data-testid={`testimonial-card-${index}`}
+  >
+    <div className="flex gap-1 mb-4">
+      {[...Array(testimonial.rating)].map((_, i) => (
+        <FAIcon key={i} icon="fas fa-star" className="text-gold" />
+      ))}
+    </div>
+    <p className="text-zinc-300 mb-6 leading-relaxed">"{testimonial.text}"</p>
+    <div>
+      <p className="text-zinc-50 font-medium">{testimonial.name}</p>
+      <p className="text-zinc-500 text-sm">{testimonial.country}</p>
+    </div>
+  </div>
+);
+
+// Video Testimonials Slider
 const VideoTestimonialsSection = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [activeVideo, setActiveVideo] = useState(null);
+
   const videos = [
-    { title: "Sarah's Story", duration: "3:45" },
-    { title: "Michael's Journey", duration: "4:12" },
-    { title: "Emma's Transformation", duration: "2:58" },
+    { title: "Sarah's Story", duration: "3:45", thumbnail: "https://images.unsplash.com/photo-1759476598893-66c7cd9c31cd?w=600" },
+    { title: "Michael's Journey", duration: "4:12", thumbnail: "https://images.unsplash.com/photo-1759476598893-66c7cd9c31cd?w=600" },
+    { title: "Emma's Transformation", duration: "2:58", thumbnail: "https://images.unsplash.com/photo-1759476598893-66c7cd9c31cd?w=600" },
+    { title: "David's Experience", duration: "3:30", thumbnail: "https://images.unsplash.com/photo-1759476598893-66c7cd9c31cd?w=600" },
   ];
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % videos.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + videos.length) % videos.length);
+  };
+
+  const playVideo = (index) => {
+    setActiveVideo(index);
+  };
+
+  const closeVideo = () => {
+    setActiveVideo(null);
+  };
 
   return (
     <section className="bg-zinc-950 py-24 md:py-32">
@@ -625,41 +832,120 @@ const VideoTestimonialsSection = () => {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {videos.map((video, index) => (
-            <div 
-              key={index}
-              className="relative aspect-video bg-zinc-800 rounded-2xl overflow-hidden group cursor-pointer card-hover"
-              data-testid={`video-testimonial-${index}`}
-            >
-              <img 
-                src="https://images.unsplash.com/photo-1759476598893-66c7cd9c31cd"
-                alt={video.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="video-overlay absolute inset-0 flex items-center justify-center">
-                <div className="w-16 h-16 bg-gold rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Play className="w-6 h-6 text-zinc-950 ml-1" />
-                </div>
-              </div>
-              <div className="absolute bottom-4 left-4 right-4">
-                <p className="text-zinc-50 font-medium">{video.title}</p>
-                <p className="text-zinc-400 text-sm">{video.duration}</p>
-              </div>
-            </div>
+        {/* Desktop Grid */}
+        <div className="hidden md:grid md:grid-cols-3 gap-6">
+          {videos.slice(0, 3).map((video, index) => (
+            <VideoCard key={index} video={video} index={index} onPlay={() => playVideo(index)} />
           ))}
         </div>
+
+        {/* Mobile Slider */}
+        <div className="md:hidden relative">
+          <div className="overflow-hidden">
+            <div 
+              className="flex transition-transform duration-300 ease-in-out"
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+            >
+              {videos.map((video, index) => (
+                <div key={index} className="w-full flex-shrink-0 px-2">
+                  <VideoCard video={video} index={index} onPlay={() => playVideo(index)} />
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Slider Controls */}
+          <div className="flex justify-center items-center gap-4 mt-6">
+            <button 
+              onClick={prevSlide}
+              className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-gold transition-colors"
+              data-testid="video-prev-btn"
+            >
+              <FAIcon icon="fas fa-chevron-left" />
+            </button>
+            <div className="flex gap-2">
+              {videos.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-2 h-2 rounded-full transition-colors ${currentSlide === index ? 'bg-gold' : 'bg-zinc-700'}`}
+                  data-testid={`video-dot-${index}`}
+                />
+              ))}
+            </div>
+            <button 
+              onClick={nextSlide}
+              className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-gold transition-colors"
+              data-testid="video-next-btn"
+            >
+              <FAIcon icon="fas fa-chevron-right" />
+            </button>
+          </div>
+        </div>
+
+        {/* Video Modal */}
+        {activeVideo !== null && (
+          <div 
+            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+            onClick={closeVideo}
+            data-testid="video-modal"
+          >
+            <div className="relative w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
+              <button 
+                onClick={closeVideo}
+                className="absolute -top-12 right-0 text-white hover:text-gold transition-colors"
+                data-testid="video-modal-close"
+              >
+                <FAIcon icon="fas fa-times" className="text-2xl" />
+              </button>
+              <video 
+                src={DEMO_VIDEO_URL}
+                controls
+                autoPlay
+                className="w-full rounded-xl"
+                data-testid="video-player"
+              >
+                Your browser does not support the video tag.
+              </video>
+              <p className="text-center text-zinc-400 mt-4">{videos[activeVideo].title}</p>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
 };
+
+// Video Card
+const VideoCard = ({ video, index, onPlay }) => (
+  <div 
+    className="relative aspect-video bg-zinc-800 rounded-2xl overflow-hidden group cursor-pointer card-hover"
+    onClick={onPlay}
+    data-testid={`video-testimonial-${index}`}
+  >
+    <img 
+      src={video.thumbnail}
+      alt={video.title}
+      className="w-full h-full object-cover"
+    />
+    <div className="video-overlay absolute inset-0 flex items-center justify-center">
+      <div className="w-16 h-16 bg-gold rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+        <FAIcon icon="fas fa-play" className="text-zinc-950 text-xl ml-1" />
+      </div>
+    </div>
+    <div className="absolute bottom-4 left-4 right-4">
+      <p className="text-zinc-50 font-medium">{video.title}</p>
+      <p className="text-zinc-400 text-sm">{video.duration}</p>
+    </div>
+  </div>
+);
 
 // FAQ Section
 const FAQSection = () => {
   const faqs = [
     {
       question: "How much does bariatric surgery cost in Istanbul?",
-      answer: "Our all-inclusive packages start from €3,500 for gastric sleeve surgery. This includes the surgery, hospital stay, airport transfers, hotel accommodation, and post-operative care. Contact us for a personalized quote based on your specific needs."
+      answer: "Our all-inclusive packages vary based on the procedure type. Contact us for a personalized quote that includes surgery, hospital stay, airport transfers, hotel accommodation, and post-operative care."
     },
     {
       question: "Is it safe to have surgery in Turkey?",
@@ -737,7 +1023,7 @@ const ContactSection = () => {
             className="btn-whatsapp px-8 py-4 rounded-full text-lg font-medium inline-flex items-center justify-center gap-2"
             data-testid="cta-whatsapp-btn"
           >
-            <MessageCircle className="w-5 h-5" />
+            <FAIcon icon="fab fa-whatsapp" className="text-xl" />
             Chat on WhatsApp
           </a>
           <a 
@@ -752,15 +1038,15 @@ const ContactSection = () => {
 
         <div className="flex flex-wrap justify-center gap-8 text-zinc-400">
           <a href="tel:+905491470247" className="flex items-center gap-2 hover:text-gold transition-colors">
-            <Phone className="w-5 h-5" />
+            <FAIcon icon="fas fa-phone" />
             +90 549 147 0247
           </a>
           <a href="mailto:info@bariatricistanbul.com" className="flex items-center gap-2 hover:text-gold transition-colors">
-            <Mail className="w-5 h-5" />
+            <FAIcon icon="fas fa-envelope" />
             info@bariatricistanbul.com
           </a>
           <span className="flex items-center gap-2">
-            <MapPin className="w-5 h-5" />
+            <FAIcon icon="fas fa-map-marker-alt" />
             Istanbul, Turkey
           </span>
         </div>
@@ -805,10 +1091,10 @@ const WhatsAppButton = () => {
       href={WHATSAPP_LINK}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 btn-whatsapp w-16 h-16 rounded-full flex items-center justify-center animate-pulse-glow shadow-lg"
+      className="fixed bottom-6 right-6 z-40 btn-whatsapp w-16 h-16 rounded-full flex items-center justify-center animate-pulse-glow shadow-lg"
       data-testid="whatsapp-floating-btn"
     >
-      <MessageCircle className="w-7 h-7" />
+      <FAIcon icon="fab fa-whatsapp" className="text-3xl" />
     </a>
   );
 };
