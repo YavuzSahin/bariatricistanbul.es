@@ -14,7 +14,18 @@ import axios from "axios";
 
 const WHATSAPP_LINK = "https://wa.me/bariatric";
 const CRM_ENDPOINT = "https://crm.bariatricistanbul.com/action/addLeads";
-const API_URL = process.env.REACT_APP_BACKEND_URL;
+const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+
+// Axios instance with auth header
+const api = axios.create({ baseURL: API_URL });
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('auth_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 // Auth Context
 const AuthContext = createContext(null);
@@ -30,10 +41,16 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   const checkAuth = async () => {
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      setLoading(false);
+      return;
+    }
     try {
-      const res = await axios.get(`${API_URL}/api/auth/me`, { withCredentials: true });
+      const res = await api.get('/api/auth/me');
       setUser(res.data);
     } catch {
+      localStorage.removeItem('auth_token');
       setUser(null);
     } finally {
       setLoading(false);
@@ -41,13 +58,16 @@ const AuthProvider = ({ children }) => {
   };
 
   const login = async (email, password) => {
-    const res = await axios.post(`${API_URL}/api/auth/login`, { email, password }, { withCredentials: true });
+    const res = await api.post('/api/auth/login', { email, password });
+    if (res.data.token) {
+      localStorage.setItem('auth_token', res.data.token);
+    }
     setUser(res.data);
     return res.data;
   };
 
   const logout = async () => {
-    await axios.post(`${API_URL}/api/auth/logout`, {}, { withCredentials: true });
+    localStorage.removeItem('auth_token');
     setUser(null);
   };
 
@@ -361,7 +381,7 @@ const ItinerarySection = () => {
   const [itinerary, setItinerary] = useState([]);
 
   useEffect(() => {
-    axios.get(`${API_URL}/api/content/itinerary`).then(res => setItinerary(res.data)).catch(() => {});
+    api.get('/api/content/itinerary').then(res => setItinerary(res.data)).catch(() => {});
   }, []);
 
   return (
@@ -400,7 +420,7 @@ const GallerySection = () => {
   const [transformations, setTransformations] = useState([]);
 
   useEffect(() => {
-    axios.get(`${API_URL}/api/content/transformations`).then(res => setTransformations(res.data)).catch(() => {});
+    api.get('/api/content/transformations').then(res => setTransformations(res.data)).catch(() => {});
   }, []);
 
   const settings = {
@@ -453,7 +473,7 @@ const TestimonialsSection = () => {
   const [testimonials, setTestimonials] = useState([]);
 
   useEffect(() => {
-    axios.get(`${API_URL}/api/content/testimonials`).then(res => setTestimonials(res.data)).catch(() => {});
+    api.get('/api/content/testimonials').then(res => setTestimonials(res.data)).catch(() => {});
   }, []);
 
   const settings = {
@@ -506,7 +526,7 @@ const VideoTestimonialsSection = () => {
   const [activeVideo, setActiveVideo] = useState(null);
 
   useEffect(() => {
-    axios.get(`${API_URL}/api/content/video-testimonials`).then(res => setVideos(res.data)).catch(() => {});
+    api.get('/api/content/video-testimonials').then(res => setVideos(res.data)).catch(() => {});
   }, []);
 
   const settings = {
@@ -728,10 +748,10 @@ const AdminDashboard = () => {
   const loadAllData = async () => {
     try {
       const [t, te, v, i] = await Promise.all([
-        axios.get(`${API_URL}/api/content/transformations`),
-        axios.get(`${API_URL}/api/content/testimonials`),
-        axios.get(`${API_URL}/api/content/video-testimonials`),
-        axios.get(`${API_URL}/api/content/itinerary`)
+        api.get('/api/content/transformations'),
+        api.get('/api/content/testimonials'),
+        api.get('/api/content/video-testimonials'),
+        api.get('/api/content/itinerary')
       ]);
       setData({ transformations: t.data, testimonials: te.data, videoTestimonials: v.data, itinerary: i.data });
     } catch {}
@@ -745,16 +765,16 @@ const AdminDashboard = () => {
   const handleDelete = async (type, id) => {
     if (!window.confirm("Are you sure?")) return;
     const endpoints = { transformations: "transformations", testimonials: "testimonials", videoTestimonials: "video-testimonials", itinerary: "itinerary" };
-    await axios.delete(`${API_URL}/api/content/${endpoints[type]}/${id}`, { withCredentials: true });
+    await api.delete(`/api/content/${endpoints[type]}/${id}`);
     loadAllData();
   };
 
   const handleSave = async (type, formData) => {
     const endpoints = { transformations: "transformations", testimonials: "testimonials", videoTestimonials: "video-testimonials", itinerary: "itinerary" };
     if (editItem) {
-      await axios.put(`${API_URL}/api/content/${endpoints[type]}/${editItem.id}`, formData, { withCredentials: true });
+      await api.put(`/api/content/${endpoints[type]}/${editItem.id}`, formData);
     } else {
-      await axios.post(`${API_URL}/api/content/${endpoints[type]}`, formData, { withCredentials: true });
+      await api.post(`/api/content/${endpoints[type]}`, formData);
     }
     setShowForm(false);
     setEditItem(null);

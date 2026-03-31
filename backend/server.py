@@ -157,10 +157,12 @@ async def login(request: LoginRequest, response: Response):
     access_token = create_access_token(user_id, email)
     refresh_token = create_refresh_token(user_id)
     
+    # Set cookies (for same-domain)
     response.set_cookie(key="access_token", value=access_token, httponly=True, secure=False, samesite="lax", max_age=3600, path="/")
     response.set_cookie(key="refresh_token", value=refresh_token, httponly=True, secure=False, samesite="lax", max_age=604800, path="/")
     
-    return {"id": user_id, "email": user["email"], "name": user["name"], "role": user["role"]}
+    # Return token in response body (for cross-domain/PHP proxy)
+    return {"id": user_id, "email": user["email"], "name": user["name"], "role": user["role"], "token": access_token}
 
 @auth_router.post("/logout")
 async def logout(response: Response):
