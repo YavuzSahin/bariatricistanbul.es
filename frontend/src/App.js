@@ -683,7 +683,7 @@ const AdminDashboard = () => {
     itinerary: "itinerary", surgeon: "surgeon", hospital: "hospital", blog: "blog"
   };
 
-  useEffect(() => { loadData(); }, [activeTab]);
+  useEffect(() => { loadData(); }, [activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadData = async () => {
     try {
