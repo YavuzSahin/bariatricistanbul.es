@@ -426,7 +426,7 @@ async def upload_file(file: UploadFile = File(...), user: dict = Depends(get_cur
 
 @api_router.get("/sitemap.xml", response_class=PlainTextResponse)
 async def sitemap():
-    base = "https://bariatricistanbul.com"
+    base = os.environ.get("SITE_URL", "https://health-intake-22.preview.emergentagent.com")
     urls = [
         f'<url><loc>{base}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>',
         f'<url><loc>{base}/blog</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>',
