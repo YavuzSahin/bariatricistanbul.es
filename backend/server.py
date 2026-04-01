@@ -16,6 +16,8 @@ from datetime import datetime, timezone, timedelta
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional
 
+from fastapi.responses import PlainTextResponse
+
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
@@ -404,6 +406,19 @@ api_router.include_router(content_router)
 @api_router.get("/")
 async def root():
     return {"message": "Bariatric Istanbul API - Cirugía Bariátrica en Turquía"}
+
+@api_router.get("/sitemap.xml", response_class=PlainTextResponse)
+async def sitemap():
+    base = "https://bariatricistanbul.com"
+    urls = [
+        f'<url><loc>{base}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>',
+        f'<url><loc>{base}/blog</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>',
+    ]
+    posts = await db.blog.find({"published": True}, {"slug": 1, "_id": 0}).to_list(100)
+    for p in posts:
+        urls.append(f'<url><loc>{base}/blog/{p["slug"]}</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>')
+    xml = f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{"".join(urls)}\n</urlset>'
+    return PlainTextResponse(content=xml, media_type="application/xml")
 
 app.include_router(api_router)
 

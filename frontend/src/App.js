@@ -101,7 +101,7 @@ const Navigation = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-zinc-950/80 backdrop-blur-2xl border-b border-white/5">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="flex items-center justify-between h-20">
-          <Link to="/" className="font-serif text-2xl text-zinc-50 font-semibold">Bariatric<span className="text-gold">Istanbul</span></Link>
+          <Link to="/" className="flex items-center"><img src="/logo.png" alt="Bariatric Istanbul" className="h-12" /></Link>
           
           <div className="hidden lg:flex items-center gap-6">
             {navLinks.map((link) => (
@@ -535,7 +535,7 @@ const Footer = () => (
     <div className="max-w-7xl mx-auto px-6 md:px-12">
       <div className="flex flex-col md:flex-row justify-between items-center gap-6">
         <div>
-          <Link to="/" className="font-serif text-xl text-zinc-50">Bariatric<span className="text-gold">Istanbul</span></Link>
+          <Link to="/" className="flex items-center"><img src="/logo.png" alt="Bariatric Istanbul" className="h-10" /></Link>
           <p className="text-zinc-500 text-sm mt-2">Cirugía bariátrica de clase mundial en Turquía</p>
         </div>
         <div className="flex gap-6 text-zinc-400 text-sm">
@@ -720,7 +720,7 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-zinc-950">
       <header className="bg-zinc-900 border-b border-zinc-800 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <h1 className="font-serif text-xl text-zinc-50">Bariatric<span className="text-gold">Istanbul</span> Admin</h1>
+          <h1 className="flex items-center"><img src="/logo.png" alt="Bariatric Istanbul" className="h-10" /><span className="ml-2 text-zinc-400 text-sm">Admin</span></h1>
           <div className="flex items-center gap-4">
             <span className="text-zinc-400 text-sm">{user?.email}</span>
             <Button onClick={handleLogout} variant="outline" size="sm" className="border-zinc-700 text-zinc-300">
