@@ -145,8 +145,27 @@ const HeroSection = () => {
     e.preventDefault();
     try {
       await fetch(CRM_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
-      if (window.fbq) window.fbq('track', 'Lead', { content_name: 'Bariatric Istanbul Form', content_category: 'Medical Tourism' });
+
+      // Shared event_id for deduplication between browser pixel and server CAPI
+      const eventId = `lead_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+
+      if (window.fbq) window.fbq('track', 'Lead', { content_name: 'Bariatric Istanbul Form', content_category: 'Medical Tourism' }, { eventID: eventId });
       if (window.gtag) window.gtag('event', 'generate_lead', { event_category: 'form', event_label: 'hero_contact_form' });
+
+      // Server-side Meta Conversions API
+      const getCookie = (name) => { const m = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)')); return m ? m[2] : null; };
+      api.post('/api/meta-event', {
+        event_name: 'Lead',
+        event_id: eventId,
+        email: formData.email,
+        phone: formData.phone,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        source_url: window.location.href,
+        fbc: getCookie('_fbc'),
+        fbp: getCookie('_fbp'),
+      }).catch(() => {});
+
       setStatus("success");
     } catch { setStatus("error"); }
   };

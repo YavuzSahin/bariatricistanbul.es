@@ -35,6 +35,7 @@ React + FastAPI + MongoDB, Tailwind CSS, Slick Carousel, FontAwesome, react-inte
 
 - [x] Google Analytics (GA4: G-65DHG712ZZ) + Meta Pixel (413226940305519)
 - [x] Lead conversion tracking on form submit (GA4 generate_lead + Meta Lead event)
+- [x] Meta Conversions API (server-side tracking with event deduplication)
 
 ## Prioritized Backlog
 ### P1

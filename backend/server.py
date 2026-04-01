@@ -19,9 +19,16 @@ import os
 import logging
 import bcrypt
 import jwt
+import httpx
+import hashlib
+import time
 from datetime import datetime, timezone, timedelta
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional
+
+META_PIXEL_ID = os.environ.get("META_PIXEL_ID")
+META_ACCESS_TOKEN = os.environ.get("META_ACCESS_TOKEN")
+META_API_URL = f"https://graph.facebook.com/v25.0/{META_PIXEL_ID}/events" if META_PIXEL_ID else None
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
@@ -423,6 +430,63 @@ async def upload_file(file: UploadFile = File(...), user: dict = Depends(get_cur
     with open(filepath, "wb") as f:
         shutil.copyfileobj(file.file, f)
     return {"url": f"/api/uploads/{filename}", "filename": filename}
+
+# Meta Conversions API
+class MetaEventData(BaseModel):
+    event_name: str = "Lead"
+    event_id: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    source_url: Optional[str] = None
+    fbc: Optional[str] = None
+    fbp: Optional[str] = None
+
+@api_router.post("/meta-event")
+async def send_meta_event(data: MetaEventData, request: Request):
+    if not META_API_URL or not META_ACCESS_TOKEN:
+        return {"status": "skipped", "reason": "Meta API not configured"}
+
+    user_data = {}
+    if data.email:
+        user_data["em"] = [hashlib.sha256(data.email.lower().strip().encode()).hexdigest()]
+    if data.phone:
+        user_data["ph"] = [hashlib.sha256(data.phone.strip().encode()).hexdigest()]
+    if data.first_name:
+        user_data["fn"] = [hashlib.sha256(data.first_name.lower().strip().encode()).hexdigest()]
+    if data.last_name:
+        user_data["ln"] = [hashlib.sha256(data.last_name.lower().strip().encode()).hexdigest()]
+
+    client_ip = request.headers.get("x-forwarded-for", request.client.host)
+    user_agent = request.headers.get("user-agent", "")
+    user_data["client_ip_address"] = client_ip
+    user_data["client_user_agent"] = user_agent
+    if data.fbc:
+        user_data["fbc"] = data.fbc
+    if data.fbp:
+        user_data["fbp"] = data.fbp
+
+    event = {
+        "event_name": data.event_name,
+        "event_time": int(time.time()),
+        "event_id": data.event_id or f"lead_{int(time.time())}_{uuid.uuid4().hex[:8]}",
+        "action_source": "website",
+        "event_source_url": data.source_url or "https://bariatricistanbul.es",
+        "user_data": user_data,
+    }
+
+    payload = {"data": [event], "access_token": META_ACCESS_TOKEN}
+
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(META_API_URL, json=payload, timeout=10)
+            result = resp.json()
+            logger.info(f"Meta CAPI response: {result}")
+            return {"status": "sent", "response": result}
+    except Exception as e:
+        logger.error(f"Meta CAPI error: {e}")
+        return {"status": "error", "message": str(e)}
 
 @api_router.get("/sitemap.xml", response_class=PlainTextResponse)
 async def sitemap():
