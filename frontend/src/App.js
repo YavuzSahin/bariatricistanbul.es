@@ -942,6 +942,40 @@ const LandingPage = () => (
 );
 
 // ============================================
+// COOKIE CONSENT BANNER
+// ============================================
+
+const CookieConsent = () => {
+  const [visible, setVisible] = useState(() => !localStorage.getItem('cookie_consent'));
+
+  const accept = () => { localStorage.setItem('cookie_consent', 'accepted'); setVisible(false); };
+  const decline = () => { localStorage.setItem('cookie_consent', 'declined'); setVisible(false); };
+
+  if (!visible) return null;
+
+  return (
+    <div data-testid="cookie-consent-banner" className="fixed bottom-0 left-0 right-0 z-50 bg-zinc-900/95 backdrop-blur-xl border-t border-zinc-800 p-4 md:p-6 animate-fade-in-up">
+      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <div className="flex-1">
+          <p className="text-zinc-300 text-sm leading-relaxed">
+            Utilizamos cookies para mejorar tu experiencia en nuestro sitio web. Al continuar navegando, aceptas nuestra{' '}
+            <a href="#" className="text-gold hover:underline">política de cookies</a>.
+          </p>
+        </div>
+        <div className="flex gap-3 shrink-0">
+          <button data-testid="cookie-decline-btn" onClick={decline} className="px-5 py-2.5 rounded-full text-sm text-zinc-400 border border-zinc-700 hover:border-zinc-500 hover:text-zinc-200 transition-colors">
+            Rechazar
+          </button>
+          <button data-testid="cookie-accept-btn" onClick={accept} className="btn-gold px-6 py-2.5 rounded-full text-sm font-medium">
+            Aceptar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============================================
 // MAIN APP
 // ============================================
 
@@ -956,6 +990,7 @@ function App() {
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
         </Routes>
+        <CookieConsent />
       </BrowserRouter>
     </AuthProvider>
   );

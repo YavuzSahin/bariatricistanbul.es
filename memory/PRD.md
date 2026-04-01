@@ -79,6 +79,7 @@ Build a landing page for Bariatric Istanbul to collect patient information (name
 - [x] Sitemap.xml and robots.txt
 - [x] cPanel deployment scripts (PHP proxy, .htaccess)
 - [x] localStorage auth for cPanel compatibility
+- [x] Cookie consent banner (Spanish, Accept/Decline, persists in localStorage)
 - [x] All backend API tests passing (26/26)
 
 ## Prioritized Backlog
@@ -88,7 +89,6 @@ Build a landing page for Bariatric Istanbul to collect patient information (name
 - Add Google Analytics / Meta Pixel
 
 ### P2 (Medium)
-- Cookie consent banner
 - Deploy alternative languages (Turkish, German, etc.)
 - Live chat widget
 - Add more blog posts for SEO coverage
