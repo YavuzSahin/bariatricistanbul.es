@@ -33,10 +33,12 @@ Build a landing page for Bariatric Istanbul to collect patient information (name
 ## Tech Stack
 React + FastAPI + MongoDB, Tailwind CSS, Slick Carousel, FontAwesome, react-international-phone
 
+- [x] Google Analytics (GA4: G-65DHG712ZZ) + Meta Pixel (413226940305519)
+- [x] Lead conversion tracking on form submit (GA4 generate_lead + Meta Lead event)
+
 ## Prioritized Backlog
 ### P1
 - Replace placeholder images with real B&A photos
-- Add Google Analytics / Meta Pixel
 - Real video testimonials (YouTube embeds)
 
 ### P2

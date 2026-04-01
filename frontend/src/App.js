@@ -145,6 +145,8 @@ const HeroSection = () => {
     e.preventDefault();
     try {
       await fetch(CRM_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
+      if (window.fbq) window.fbq('track', 'Lead', { content_name: 'Bariatric Istanbul Form', content_category: 'Medical Tourism' });
+      if (window.gtag) window.gtag('event', 'generate_lead', { event_category: 'form', event_label: 'hero_contact_form' });
       setStatus("success");
     } catch { setStatus("error"); }
   };
