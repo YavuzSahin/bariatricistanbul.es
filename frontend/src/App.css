@@ -262,24 +262,26 @@ html {
     top: 50%;
     transform: translateY(-50%);
     z-index: 10;
-    width: 60px;
-    height: 60px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
-    background: #27272a;
-    border: 2px solid #3f3f46;
-    color: #a1a1aa;
+    background: #D4AF37;
+    border: 2px solid #D4AF37;
+    color: #09090b;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 20px;
+    font-size: 24px;
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
 }
 
 .slick-custom-arrow:hover {
-    background: #D4AF37;
-    border-color: #D4AF37;
+    background: #e6c44a;
+    border-color: #e6c44a;
     color: #09090b;
+    box-shadow: 0 6px 30px rgba(212, 175, 55, 0.5);
 }
 
 .slick-custom-arrow.slick-prev {
@@ -333,9 +335,9 @@ html {
     }
     
     .slick-custom-arrow {
-        width: 44px;
-        height: 44px;
-        font-size: 16px;
+        width: 52px;
+        height: 52px;
+        font-size: 18px;
     }
     
     .slick-custom-arrow.slick-prev {
@@ -344,5 +346,24 @@ html {
     
     .slick-custom-arrow.slick-next {
         right: -8px;
+    }
+}
+
+/* Mobile text scaling */
+@media (max-width: 768px) {
+    html {
+        font-size: 17px;
+    }
+    
+    .text-sm {
+        font-size: 0.9rem !important;
+    }
+    
+    .text-xs {
+        font-size: 0.8rem !important;
+    }
+    
+    p, li, span {
+        line-height: 1.7;
     }
 }

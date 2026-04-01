@@ -13,7 +13,7 @@ import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import axios from "axios";
 
-const WHATSAPP_LINK = "https://wa.me/bariatric";
+const WHATSAPP_LINK = "https://wa.me/bariatricistanbul";
 const CRM_ENDPOINT = "https://crm.bariatricistanbul.com/action/addLeads";
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -101,8 +101,7 @@ const Navigation = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-zinc-950/80 backdrop-blur-2xl border-b border-white/5">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="flex items-center justify-between h-20">
-          <Link to="/" className="flex items-center"><img src="/logo.png" alt="Bariatric Istanbul" className="h-12" /></Link>
-          
+          <Link to="/" className="flex items-center"><img src="/logo.png" alt="Bariatric Istanbul" className="h-14 md:h-16" /></Link>          
           <div className="hidden lg:flex items-center gap-6">
             {navLinks.map((link) => (
               link.href.startsWith('#') ? 
@@ -437,6 +436,12 @@ const VideoTestimonialsSection = () => {
   const [activeVideo, setActiveVideo] = useState(null);
   useEffect(() => { api.get('/api/content/video-testimonials').then(res => setItems(res.data)).catch(() => {}); }, []);
 
+  const isYouTube = (url) => url && (url.includes('youtube.com') || url.includes('youtu.be'));
+  const getYouTubeId = (url) => {
+    const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    return match ? match[1] : null;
+  };
+
   if (items.length === 0) return null;
 
   return (
@@ -470,7 +475,11 @@ const VideoTestimonialsSection = () => {
               <button onClick={() => setActiveVideo(null)} className="absolute -top-12 right-0 w-10 h-10 bg-zinc-800 rounded-full flex items-center justify-center text-white hover:text-gold">
                 <FAIcon icon="fas fa-times" />
               </button>
-              <video src={activeVideo.video_url} controls autoPlay className="w-full rounded-xl" />
+              {isYouTube(activeVideo.video_url) ? (
+                <iframe src={`https://www.youtube.com/embed/${getYouTubeId(activeVideo.video_url)}?autoplay=1`} className="w-full aspect-video rounded-xl" allow="autoplay; encrypted-media" allowFullScreen title={activeVideo.title} />
+              ) : (
+                <video src={activeVideo.video_url} controls autoPlay className="w-full rounded-xl" />
+              )}
             </div>
           </div>
         )}
@@ -481,10 +490,10 @@ const VideoTestimonialsSection = () => {
 
 const FAQSection = () => {
   const faqs = [
-    { q: "¿Cuánto cuesta la manga gástrica en Turquía?", a: "Nuestros paquetes todo incluido comienzan desde €3,500. Incluye cirugía, hospital, hotel 5 estrellas, traslados y 12 meses de seguimiento." },
+    { q: "¿Cuánto cuesta la manga gástrica en Turquía?", a: "Ofrecemos paquetes todo incluido con precios competitivos. Cada caso es único, por lo que le invitamos a contactarnos por WhatsApp o formulario para recibir un presupuesto personalizado sin compromiso." },
     { q: "¿Es seguro operarse en Turquía?", a: "Absolutamente. Turquía es líder mundial en turismo médico. Nuestro hospital tiene acreditación JCI y nuestros cirujanos tienen formación internacional." },
     { q: "¿Cuántos días necesito quedarme en Estambul?", a: "La mayoría de pacientes se quedan 5-7 días. Esto incluye pruebas preoperatorias, cirugía y seguimiento inicial." },
-    { q: "¿Qué incluye el paquete?", a: "Cirugía, anestesia, estancia hospitalaria privada, hotel 5 estrellas, traslados VIP, traductor y 12 meses de seguimiento online." },
+    { q: "¿Qué incluye el paquete?", a: "Cirugía, anestesia, estancia hospitalaria privada, hotel 5 estrellas, traslados VIP, traductor y 12 meses de seguimiento online. Contáctenos para más detalles." },
     { q: "¿Cuánto peso puedo perder?", a: "Con manga gástrica: 60-70% del exceso de peso en 12-18 meses. Con bypass gástrico: 70-80% del exceso de peso." },
     { q: "¿Qué seguimiento ofrecen?", a: "12 meses de seguimiento incluido: consultas virtuales, guía nutricional, soporte WhatsApp 24/7 y acceso a nuestra comunidad de pacientes." },
   ];
@@ -514,7 +523,7 @@ const CTASection = () => (
     <div className="max-w-4xl mx-auto px-6 md:px-12 text-center">
       <p className="text-sm uppercase tracking-[0.2em] text-gold mb-4">Comienza Hoy</p>
       <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-zinc-50 mb-6">¿Listo para Transformar Tu Vida?</h2>
-      <p className="text-zinc-300 text-lg mb-8 max-w-2xl mx-auto">Da el primer paso hacia una vida más saludable. Contáctanos hoy para una consulta gratuita.</p>
+      <p className="text-zinc-300 text-lg mb-8 max-w-2xl mx-auto">Da el primer paso hacia una vida más saludable. Contáctanos hoy para una consulta gratuita y presupuesto personalizado.</p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
         <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="btn-whatsapp px-8 py-4 rounded-full text-lg inline-flex items-center justify-center gap-2">
           <FAIcon icon="fab fa-whatsapp" className="text-xl" />Chatear por WhatsApp
@@ -522,8 +531,8 @@ const CTASection = () => (
         <a href="#contacto" className="btn-gold px-8 py-4 rounded-full text-lg">Solicitar Consulta</a>
       </div>
       <div className="flex flex-wrap justify-center gap-8 text-zinc-400">
-        <a href="tel:+905491470247" className="flex items-center gap-2 hover:text-gold"><FAIcon icon="fas fa-phone" />+90 549 147 0247</a>
-        <a href="mailto:info@bariatricistanbul.com" className="flex items-center gap-2 hover:text-gold"><FAIcon icon="fas fa-envelope" />info@bariatricistanbul.com</a>
+        <a href="mailto:help@bariatricistanbul.com" className="flex items-center gap-2 hover:text-gold"><FAIcon icon="fas fa-envelope" />help@bariatricistanbul.com</a>
+        <a href="https://www.instagram.com/bariatricaistanbul" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-gold"><FAIcon icon="fab fa-instagram" />@bariatricaistanbul</a>
         <span className="flex items-center gap-2"><FAIcon icon="fas fa-map-marker-alt" />Estambul, Turquía</span>
       </div>
     </div>
@@ -535,14 +544,19 @@ const Footer = () => (
     <div className="max-w-7xl mx-auto px-6 md:px-12">
       <div className="flex flex-col md:flex-row justify-between items-center gap-6">
         <div>
-          <Link to="/" className="flex items-center"><img src="/logo.png" alt="Bariatric Istanbul" className="h-10" /></Link>
+          <Link to="/" className="flex items-center"><img src="/logo.png" alt="Bariatric Istanbul" className="h-12" /></Link>
           <p className="text-zinc-500 text-sm mt-2">Cirugía bariátrica de clase mundial en Turquía</p>
         </div>
-        <div className="flex gap-6 text-zinc-400 text-sm">
-          <a href="#" className="hover:text-gold">Política de Privacidad</a>
-          <a href="#" className="hover:text-gold">Términos</a>
+        <div className="flex flex-wrap gap-6 text-zinc-400 text-sm justify-center">
+          <Link to="/politica-de-privacidad" className="hover:text-gold">Política de Privacidad</Link>
+          <Link to="/terminos" className="hover:text-gold">Términos</Link>
+          <Link to="/cancelacion-y-reembolso" className="hover:text-gold">Cancelación y Reembolso</Link>
           <Link to="/blog" className="hover:text-gold">Blog</Link>
-          <Link to="/admin" className="hover:text-gold">Admin</Link>
+        </div>
+        <div className="flex items-center gap-4">
+          <a href="https://www.instagram.com/bariatricaistanbul" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-gold text-xl"><FAIcon icon="fab fa-instagram" /></a>
+          <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-gold text-xl"><FAIcon icon="fab fa-whatsapp" /></a>
+          <a href="mailto:help@bariatricistanbul.com" className="text-zinc-400 hover:text-gold text-xl"><FAIcon icon="fas fa-envelope" /></a>
         </div>
       </div>
       <div className="h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent my-8"></div>
@@ -639,22 +653,22 @@ const AdminLogin = () => {
       await login(email, password);
       navigate("/admin/dashboard");
     } catch (err) {
-      setError(err.response?.data?.detail || "Error de inicio de sesión");
+      setError(err.response?.data?.detail || "Login failed");
     }
   };
 
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-6">
       <div className="glass rounded-2xl p-8 w-full max-w-md">
-        <h1 className="font-serif text-3xl text-zinc-50 mb-2 text-center">Admin</h1>
-        <p className="text-zinc-400 text-center mb-8">Bariatric Istanbul CMS</p>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="form-input h-12" required />
-          <Input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} className="form-input h-12" required />
-          {error && <p className="text-red-400 text-sm">{error}</p>}
-          <Button type="submit" className="btn-gold w-full h-12">Iniciar Sesión</Button>
+        <div className="flex justify-center mb-4"><img src="/logo.png" alt="Bariatric Istanbul" className="h-16" /></div>
+        <p className="text-zinc-400 text-center mb-8">Admin Panel</p>
+        <form onSubmit={handleSubmit} className="space-y-4" data-testid="admin-login-form">
+          <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="form-input h-12" required data-testid="admin-email-input" />
+          <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-input h-12" required data-testid="admin-password-input" />
+          {error && <p className="text-red-400 text-sm" data-testid="admin-login-error">{error}</p>}
+          <Button type="submit" className="btn-gold w-full h-12" data-testid="admin-login-btn">Sign In</Button>
         </form>
-        <Link to="/" className="block text-center text-zinc-400 hover:text-gold mt-6 text-sm">← Volver al sitio</Link>
+        <Link to="/" className="block text-center text-zinc-400 hover:text-gold mt-6 text-sm">← Back to site</Link>
       </div>
     </div>
   );
@@ -669,11 +683,11 @@ const AdminDashboard = () => {
   const [showForm, setShowForm] = useState(false);
 
   const tabs = [
-    { key: "transformations", label: "Transformaciones", icon: "fas fa-images" },
-    { key: "testimonials", label: "Testimonios", icon: "fas fa-quote-right" },
+    { key: "transformations", label: "Transformations", icon: "fas fa-images" },
+    { key: "testimonials", label: "Testimonials", icon: "fas fa-quote-right" },
     { key: "videoTestimonials", label: "Videos", icon: "fas fa-video" },
-    { key: "itinerary", label: "Itinerario", icon: "fas fa-calendar-day" },
-    { key: "surgeon", label: "Cirujano", icon: "fas fa-user-md" },
+    { key: "itinerary", label: "Itinerary", icon: "fas fa-calendar-day" },
+    { key: "surgeon", label: "Surgeon", icon: "fas fa-user-md" },
     { key: "hospital", label: "Hospital", icon: "fas fa-hospital" },
     { key: "blog", label: "Blog", icon: "fas fa-blog" },
   ];
@@ -693,7 +707,7 @@ const AdminDashboard = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("¿Eliminar?")) return;
+    if (!window.confirm("Delete this item?")) return;
     await api.delete(`/api/content/${endpoints[activeTab]}/${id}`);
     loadData();
   };
@@ -723,8 +737,8 @@ const AdminDashboard = () => {
           <h1 className="flex items-center"><img src="/logo.png" alt="Bariatric Istanbul" className="h-10" /><span className="ml-2 text-zinc-400 text-sm">Admin</span></h1>
           <div className="flex items-center gap-4">
             <span className="text-zinc-400 text-sm">{user?.email}</span>
-            <Button onClick={handleLogout} variant="outline" size="sm" className="border-zinc-700 text-zinc-300">
-              <FAIcon icon="fas fa-sign-out-alt" className="mr-2" />Salir
+            <Button onClick={handleLogout} variant="outline" size="sm" className="border-zinc-700 text-zinc-300" data-testid="admin-logout-btn">
+              <FAIcon icon="fas fa-sign-out-alt" className="mr-2" />Logout
             </Button>
           </div>
         </div>
@@ -734,6 +748,7 @@ const AdminDashboard = () => {
         <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
           {tabs.map(tab => (
             <button key={tab.key} onClick={() => { setActiveTab(tab.key); setShowForm(false); setEditItem(null); }}
+              data-testid={`admin-tab-${tab.key}`}
               className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap text-sm ${activeTab === tab.key ? 'bg-gold text-zinc-950' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'}`}>
               <FAIcon icon={tab.icon} />{tab.label}
             </button>
@@ -742,8 +757,8 @@ const AdminDashboard = () => {
 
         <div className="flex justify-between items-center mb-6">
           <h2 className="font-serif text-2xl text-zinc-50">{tabs.find(t => t.key === activeTab)?.label}</h2>
-          {!isSingle && <Button onClick={() => { setEditItem(null); setShowForm(true); }} className="btn-gold"><FAIcon icon="fas fa-plus" className="mr-2" />Añadir</Button>}
-          {isSingle && !showForm && <Button onClick={() => { setEditItem(currentData); setShowForm(true); }} className="btn-gold"><FAIcon icon="fas fa-edit" className="mr-2" />Editar</Button>}
+          {!isSingle && <Button onClick={() => { setEditItem(null); setShowForm(true); }} className="btn-gold" data-testid="admin-add-btn"><FAIcon icon="fas fa-plus" className="mr-2" />Add New</Button>}
+          {isSingle && !showForm && <Button onClick={() => { setEditItem(currentData); setShowForm(true); }} className="btn-gold" data-testid="admin-edit-btn"><FAIcon icon="fas fa-edit" className="mr-2" />Edit</Button>}
         </div>
 
         {showForm ? (
@@ -761,7 +776,7 @@ const AdminDashboard = () => {
 };
 
 const SingleItemDisplay = ({ type, item }) => {
-  if (!item) return <p className="text-zinc-400">No hay datos. Haz clic en Editar para añadir.</p>;
+  if (!item) return <p className="text-zinc-400">No data yet. Click Edit to add.</p>;
 
   return (
     <div className="glass rounded-xl p-6">
@@ -772,7 +787,7 @@ const SingleItemDisplay = ({ type, item }) => {
             <h3 className="font-serif text-xl text-zinc-50">{item.name}</h3>
             <p className="text-gold">{item.title}</p>
             <p className="text-zinc-400 mt-2">{item.bio?.substring(0, 200)}...</p>
-            <p className="text-zinc-300 mt-2">Cirugías: {item.surgeries_count} | Experiencia: {item.years_experience}</p>
+            <p className="text-zinc-300 mt-2">Surgeries: {item.surgeries_count} | Experience: {item.years_experience}</p>
           </div>
         </div>
       )}
@@ -782,7 +797,7 @@ const SingleItemDisplay = ({ type, item }) => {
           <div>
             <h3 className="font-serif text-xl text-zinc-50">{item.name}</h3>
             <p className="text-zinc-400 mt-2">{item.description?.substring(0, 200)}...</p>
-            <p className="text-zinc-300 mt-2">Características: {item.features?.length || 0}</p>
+            <p className="text-zinc-300 mt-2">Features: {item.features?.length || 0}</p>
           </div>
         </div>
       )}
@@ -791,7 +806,7 @@ const SingleItemDisplay = ({ type, item }) => {
 };
 
 const AdminList = ({ type, items, onEdit, onDelete }) => {
-  if (!items?.length) return <p className="text-zinc-400 text-center py-12">Sin elementos. Haz clic en "Añadir" para crear uno.</p>;
+  if (!items?.length) return <p className="text-zinc-400 text-center py-12">No items yet. Click "Add New" to create one.</p>;
 
   return (
     <div className="grid gap-4">
@@ -803,12 +818,12 @@ const AdminList = ({ type, items, onEdit, onDelete }) => {
             {type === 'transformations' && <><p className="text-gold font-medium">{item.weight_lost}</p><p className="text-zinc-400 text-sm">{item.months_post_op}</p></>}
             {type === 'testimonials' && <><p className="text-zinc-50">{item.name} - {item.country}</p><p className="text-zinc-400 text-sm truncate">{item.text}</p></>}
             {type === 'videoTestimonials' && <><p className="text-zinc-50">{item.title}</p><p className="text-zinc-400 text-sm">{item.duration}</p></>}
-            {type === 'itinerary' && <><p className="text-gold">Día {item.day_number}: {item.title}</p><p className="text-zinc-400 text-sm truncate">{item.description}</p></>}
-            {type === 'blog' && <><p className="text-zinc-50">{item.title}</p><p className="text-zinc-400 text-sm">{item.published ? '✓ Publicado' : '○ Borrador'}</p></>}
+            {type === 'itinerary' && <><p className="text-gold">Day {item.day_number}: {item.title}</p><p className="text-zinc-400 text-sm truncate">{item.description}</p></>}
+            {type === 'blog' && <><p className="text-zinc-50">{item.title}</p><p className="text-zinc-400 text-sm">{item.published ? 'Published' : 'Draft'}</p></>}
           </div>
           <div className="flex gap-2">
-            <Button onClick={() => onEdit(item)} variant="outline" size="sm" className="border-zinc-700"><FAIcon icon="fas fa-edit" /></Button>
-            <Button onClick={() => onDelete(item.id)} variant="outline" size="sm" className="border-red-900 text-red-400"><FAIcon icon="fas fa-trash" /></Button>
+            <Button onClick={() => onEdit(item)} variant="outline" size="sm" className="border-zinc-700" data-testid={`edit-item-${i}`}><FAIcon icon="fas fa-edit" /></Button>
+            <Button onClick={() => onDelete(item.id)} variant="outline" size="sm" className="border-red-900 text-red-400" data-testid={`delete-item-${i}`}><FAIcon icon="fas fa-trash" /></Button>
           </div>
         </div>
       ))}
@@ -818,57 +833,58 @@ const AdminList = ({ type, items, onEdit, onDelete }) => {
 
 const AdminForm = ({ type, item, onSave, onCancel }) => {
   const [formData, setFormData] = useState(item || {});
+  const [uploading, setUploading] = useState(false);
 
   const fields = {
     transformations: [
-      { name: "weight_lost", label: "Peso Perdido", placeholder: "ej: 85kg perdidos" },
-      { name: "months_post_op", label: "Tiempo Post-Op", placeholder: "ej: 12 meses post-op" },
-      { name: "image_url", label: "URL Imagen" },
-      { name: "patient_name", label: "Nombre Paciente (opcional)" },
-      { name: "procedure_type", label: "Tipo Procedimiento (opcional)" },
+      { name: "weight_lost", label: "Weight Lost", placeholder: "e.g., 85kg lost" },
+      { name: "months_post_op", label: "Time Post-Op", placeholder: "e.g., 12 months post-op" },
+      { name: "image_url", label: "Image", uploadable: true, accept: "image/*" },
+      { name: "patient_name", label: "Patient Name (optional)" },
+      { name: "procedure_type", label: "Procedure Type (optional)" },
     ],
     testimonials: [
-      { name: "name", label: "Nombre" },
-      { name: "country", label: "País" },
-      { name: "text", label: "Testimonio", textarea: true },
+      { name: "name", label: "Name" },
+      { name: "country", label: "Country" },
+      { name: "text", label: "Testimonial", textarea: true },
       { name: "rating", label: "Rating (1-5)", type: "number" },
     ],
     videoTestimonials: [
-      { name: "title", label: "Título" },
-      { name: "duration", label: "Duración" },
-      { name: "thumbnail_url", label: "URL Miniatura" },
-      { name: "video_url", label: "URL Video" },
+      { name: "title", label: "Title" },
+      { name: "duration", label: "Duration" },
+      { name: "thumbnail_url", label: "Thumbnail", uploadable: true, accept: "image/*" },
+      { name: "video_url", label: "Video (YouTube URL or upload)", uploadable: true, accept: "video/*" },
     ],
     itinerary: [
-      { name: "day_number", label: "Número de Día", type: "number" },
-      { name: "title", label: "Título del Día" },
-      { name: "description", label: "Descripción", textarea: true },
+      { name: "day_number", label: "Day Number", type: "number" },
+      { name: "title", label: "Day Title" },
+      { name: "description", label: "Description", textarea: true },
     ],
     surgeon: [
-      { name: "name", label: "Nombre" },
-      { name: "title", label: "Título/Cargo" },
-      { name: "bio", label: "Biografía", textarea: true },
-      { name: "image_url", label: "URL Imagen" },
-      { name: "surgeries_count", label: "Número de Cirugías" },
-      { name: "years_experience", label: "Años de Experiencia" },
-      { name: "credentials", label: "Credenciales (una por línea)", textarea: true, isArray: true },
+      { name: "name", label: "Name" },
+      { name: "title", label: "Title / Position" },
+      { name: "bio", label: "Biography", textarea: true },
+      { name: "image_url", label: "Photo", uploadable: true, accept: "image/*" },
+      { name: "surgeries_count", label: "Number of Surgeries" },
+      { name: "years_experience", label: "Years of Experience" },
+      { name: "credentials", label: "Credentials (one per line)", textarea: true, isArray: true },
     ],
     hospital: [
-      { name: "name", label: "Nombre del Hospital" },
-      { name: "description", label: "Descripción", textarea: true },
-      { name: "image_url", label: "URL Imagen" },
-      { name: "features", label: "Características (una por línea)", textarea: true, isArray: true },
+      { name: "name", label: "Hospital Name" },
+      { name: "description", label: "Description", textarea: true },
+      { name: "image_url", label: "Photo", uploadable: true, accept: "image/*" },
+      { name: "features", label: "Features (one per line)", textarea: true, isArray: true },
     ],
     blog: [
-      { name: "title", label: "Título" },
+      { name: "title", label: "Title" },
       { name: "slug", label: "Slug (URL)" },
-      { name: "excerpt", label: "Extracto", textarea: true },
-      { name: "content", label: "Contenido (HTML)", textarea: true, large: true },
-      { name: "image_url", label: "URL Imagen" },
-      { name: "meta_title", label: "Meta Título (SEO)" },
-      { name: "meta_description", label: "Meta Descripción (SEO)", textarea: true },
-      { name: "keywords", label: "Keywords (una por línea)", textarea: true, isArray: true },
-      { name: "published", label: "Publicado", type: "checkbox" },
+      { name: "excerpt", label: "Excerpt", textarea: true },
+      { name: "content", label: "Content (HTML)", textarea: true, large: true },
+      { name: "image_url", label: "Featured Image", uploadable: true, accept: "image/*" },
+      { name: "meta_title", label: "Meta Title (SEO)" },
+      { name: "meta_description", label: "Meta Description (SEO)", textarea: true },
+      { name: "keywords", label: "Keywords (one per line)", textarea: true, isArray: true },
+      { name: "published", label: "Published", type: "checkbox" },
     ],
   };
 
@@ -886,15 +902,44 @@ const AdminForm = ({ type, item, onSave, onCancel }) => {
     return val || '';
   };
 
+  const handleUpload = async (e, fieldName) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await api.post('/api/upload', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      setFormData(prev => ({ ...prev, [fieldName]: res.data.url }));
+    } catch (err) {
+      alert('Upload failed: ' + (err.response?.data?.detail || err.message));
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <div className="glass rounded-xl p-6">
-      <h3 className="font-serif text-xl text-zinc-50 mb-6">{item ? 'Editar' : 'Añadir'}</h3>
-      <form onSubmit={(e) => { e.preventDefault(); onSave(formData); }} className="space-y-4">
+      <h3 className="font-serif text-xl text-zinc-50 mb-6">{item ? 'Edit' : 'Add New'}</h3>
+      <form onSubmit={(e) => { e.preventDefault(); onSave(formData); }} className="space-y-4" data-testid="admin-form">
         {fields[type]?.map((f) => (
           <div key={f.name}>
             <label className="text-zinc-400 text-sm mb-2 block">{f.label}</label>
             {f.type === 'checkbox' ? (
               <input type="checkbox" checked={formData[f.name] || false} onChange={(e) => handleChange(f.name, e.target.checked)} className="w-5 h-5" />
+            ) : f.uploadable ? (
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <Input value={getValue(f.name)} onChange={(e) => handleChange(f.name, e.target.value)} placeholder="Paste URL or upload file" className="form-input h-12 flex-1" />
+                  <label className={`btn-gold px-4 h-12 flex items-center cursor-pointer rounded-lg text-sm shrink-0 ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                    <FAIcon icon={uploading ? "fas fa-spinner fa-spin" : "fas fa-upload"} className="mr-2" />{uploading ? 'Uploading...' : 'Upload'}
+                    <input type="file" accept={f.accept} className="hidden" onChange={(e) => handleUpload(e, f.name)} disabled={uploading} />
+                  </label>
+                </div>
+                {getValue(f.name) && f.accept?.includes('image') && (
+                  <img src={getValue(f.name)} alt="Preview" className="h-24 rounded-lg object-cover" />
+                )}
+              </div>
             ) : f.textarea ? (
               <Textarea value={getValue(f.name, f.isArray)} onChange={(e) => handleChange(f.name, e.target.value, f.isArray)} placeholder={f.placeholder} className={`form-input ${f.large ? 'min-h-[200px]' : 'min-h-[100px]'}`} />
             ) : (
@@ -903,8 +948,8 @@ const AdminForm = ({ type, item, onSave, onCancel }) => {
           </div>
         ))}
         <div className="flex gap-4 pt-4">
-          <Button type="submit" className="btn-gold">Guardar</Button>
-          <Button type="button" onClick={onCancel} variant="outline" className="border-zinc-700">Cancelar</Button>
+          <Button type="submit" className="btn-gold" data-testid="admin-save-btn">Save</Button>
+          <Button type="button" onClick={onCancel} variant="outline" className="border-zinc-700">Cancel</Button>
         </div>
       </form>
     </div>
@@ -917,6 +962,109 @@ const ProtectedRoute = ({ children }) => {
   if (!user) return <Navigate to="/admin" replace />;
   return children;
 };
+
+// ============================================
+// LEGAL PAGES
+// ============================================
+
+const LegalPage = ({ title, children }) => (
+  <div className="bg-zinc-950 min-h-screen pt-24">
+    <Navigation />
+    <div className="max-w-4xl mx-auto px-6 md:px-12 py-12">
+      <Link to="/" className="text-gold hover:underline text-sm mb-4 inline-block">← Volver al inicio</Link>
+      <h1 className="font-serif text-3xl sm:text-4xl text-zinc-50 mb-8">{title}</h1>
+      <div className="prose prose-invert max-w-none text-zinc-300 space-y-6">{children}</div>
+    </div>
+    <Footer />
+  </div>
+);
+
+const PrivacyPage = () => (
+  <LegalPage title="Política de Privacidad">
+    <p>Última actualización: Enero 2025</p>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">1. Responsable del Tratamiento</h2>
+    <p>Bariatric Istanbul, con domicilio en Estambul, Turquía, es responsable del tratamiento de sus datos personales. Para cualquier consulta relacionada con la privacidad, puede contactarnos en: <a href="mailto:help@bariatricistanbul.com" className="text-gold">help@bariatricistanbul.com</a></p>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">2. Datos que Recopilamos</h2>
+    <p>Recopilamos los siguientes datos personales cuando usted completa nuestro formulario de contacto:</p>
+    <ul className="list-disc pl-6 space-y-2">
+      <li>Nombre y apellido</li>
+      <li>Dirección de correo electrónico</li>
+      <li>Número de teléfono</li>
+      <li>Idioma preferido de comunicación</li>
+    </ul>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">3. Finalidad del Tratamiento</h2>
+    <p>Sus datos personales se utilizan exclusivamente para:</p>
+    <ul className="list-disc pl-6 space-y-2">
+      <li>Responder a su solicitud de información médica</li>
+      <li>Proporcionarle una consulta personalizada</li>
+      <li>Enviarle información relevante sobre nuestros servicios</li>
+      <li>Coordinar su tratamiento médico en caso de que decida proceder</li>
+    </ul>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">4. Protección de Datos</h2>
+    <p>Implementamos medidas de seguridad técnicas y organizativas para proteger sus datos personales contra acceso no autorizado, pérdida o destrucción. Sus datos médicos se tratan con la máxima confidencialidad conforme a la legislación turca de protección de datos (KVKK).</p>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">5. Compartición de Datos</h2>
+    <p>No vendemos ni compartimos sus datos personales con terceros, excepto cuando sea necesario para la prestación de nuestros servicios médicos (hospital, equipo médico) y siempre con su consentimiento previo.</p>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">6. Sus Derechos</h2>
+    <p>Usted tiene derecho a acceder, rectificar, eliminar sus datos personales y a oponerse a su tratamiento. Para ejercer estos derechos, contacte: <a href="mailto:help@bariatricistanbul.com" className="text-gold">help@bariatricistanbul.com</a></p>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">7. Cookies</h2>
+    <p>Nuestro sitio web utiliza cookies para mejorar su experiencia de navegación. Puede aceptar o rechazar las cookies a través del banner de consentimiento que aparece en su primera visita.</p>
+  </LegalPage>
+);
+
+const TermsPage = () => (
+  <LegalPage title="Términos y Condiciones">
+    <p>Última actualización: Enero 2025</p>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">1. Aceptación de los Términos</h2>
+    <p>Al acceder y utilizar el sitio web de Bariatric Istanbul, usted acepta estos términos y condiciones en su totalidad. Si no está de acuerdo, por favor no utilice nuestros servicios.</p>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">2. Servicios Médicos</h2>
+    <p>Bariatric Istanbul facilita el acceso a servicios de cirugía bariátrica en Turquía. La información proporcionada en este sitio web es de carácter informativo y no sustituye el consejo médico profesional. Cada paciente será evaluado individualmente antes de cualquier procedimiento.</p>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">3. Consultas y Presupuestos</h2>
+    <p>Las consultas iniciales son gratuitas y sin compromiso. Los presupuestos proporcionados son personalizados y pueden variar según las necesidades médicas específicas de cada paciente.</p>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">4. Requisitos del Paciente</h2>
+    <p>El paciente se compromete a proporcionar información médica veraz y completa. Bariatric Istanbul se reserva el derecho de rechazar un procedimiento si determina que no es médicamente apropiado para el paciente.</p>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">5. Responsabilidad</h2>
+    <p>Bariatric Istanbul trabaja con hospitales acreditados y cirujanos certificados. Sin embargo, como en cualquier procedimiento quirúrgico, existen riesgos inherentes que serán explicados durante la consulta preoperatoria.</p>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">6. Propiedad Intelectual</h2>
+    <p>Todo el contenido de este sitio web, incluyendo textos, imágenes, logotipos y diseño, es propiedad de Bariatric Istanbul y está protegido por las leyes de propiedad intelectual.</p>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">7. Contacto</h2>
+    <p>Para cualquier consulta sobre estos términos: <a href="mailto:help@bariatricistanbul.com" className="text-gold">help@bariatricistanbul.com</a></p>
+  </LegalPage>
+);
+
+const CancellationPage = () => (
+  <LegalPage title="Política de Cancelación y Reembolso">
+    <p>Última actualización: Enero 2025</p>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">1. Cancelación por parte del Paciente</h2>
+    <p>Entendemos que las circunstancias pueden cambiar. Nuestra política de cancelación es la siguiente:</p>
+    <ul className="list-disc pl-6 space-y-2">
+      <li><strong>Más de 30 días antes:</strong> Cancelación gratuita con reembolso completo del depósito</li>
+      <li><strong>15-30 días antes:</strong> Reembolso del 50% del depósito</li>
+      <li><strong>Menos de 15 días:</strong> El depósito no es reembolsable, pero puede reprogramar su cirugía dentro de los 6 meses siguientes</li>
+    </ul>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">2. Cancelación por Razones Médicas</h2>
+    <p>Si la cirugía es cancelada por razones médicas determinadas durante la evaluación preoperatoria, se realizará un reembolso completo de todos los pagos realizados.</p>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">3. Reprogramación</h2>
+    <p>Los pacientes pueden reprogramar su procedimiento una vez sin costo adicional, siempre que la notificación se realice con al menos 15 días de antelación. Las reprogramaciones están sujetas a disponibilidad.</p>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">4. Reembolsos</h2>
+    <p>Los reembolsos se procesan dentro de los 14 días hábiles siguientes a la aprobación. Se realizan por el mismo método de pago utilizado originalmente. Los gastos bancarios de transferencia internacional corren por cuenta del paciente.</p>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">5. Servicios No Reembolsables</h2>
+    <p>Los siguientes servicios no son reembolsables una vez utilizados:</p>
+    <ul className="list-disc pl-6 space-y-2">
+      <li>Traslados ya realizados</li>
+      <li>Noches de hotel ya consumidas</li>
+      <li>Análisis y pruebas médicas realizadas</li>
+      <li>Consultas médicas completadas</li>
+    </ul>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">6. Seguimiento Postoperatorio</h2>
+    <p>El seguimiento de 12 meses incluido en el paquete no es transferible ni reembolsable una vez realizada la cirugía.</p>
+    <h2 className="font-serif text-2xl text-zinc-50 mt-8 mb-4">7. Contacto para Cancelaciones</h2>
+    <p>Para solicitar una cancelación o reprogramación, contacte a nuestro equipo:</p>
+    <ul className="list-disc pl-6 space-y-2">
+      <li>Email: <a href="mailto:help@bariatricistanbul.com" className="text-gold">help@bariatricistanbul.com</a></li>
+      <li>WhatsApp: <a href="https://wa.me/bariatricistanbul" className="text-gold">Contactar por WhatsApp</a></li>
+    </ul>
+  </LegalPage>
+);
 
 // ============================================
 // LANDING PAGE
@@ -959,7 +1107,7 @@ const CookieConsent = () => {
         <div className="flex-1">
           <p className="text-zinc-300 text-sm leading-relaxed">
             Utilizamos cookies para mejorar tu experiencia en nuestro sitio web. Al continuar navegando, aceptas nuestra{' '}
-            <a href="#" className="text-gold hover:underline">política de cookies</a>.
+            <a href="/politica-de-privacidad" className="text-gold hover:underline">política de cookies</a>.
           </p>
         </div>
         <div className="flex gap-3 shrink-0">
@@ -987,6 +1135,9 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/blog" element={<BlogList />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
+          <Route path="/politica-de-privacidad" element={<PrivacyPage />} />
+          <Route path="/terminos" element={<TermsPage />} />
+          <Route path="/cancelacion-y-reembolso" element={<CancellationPage />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
         </Routes>

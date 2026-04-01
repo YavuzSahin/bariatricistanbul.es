@@ -1,9 +1,16 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends
+from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends, UploadFile, File
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import PlainTextResponse
 from dotenv import load_dotenv
 from pathlib import Path
+import shutil
+import uuid
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
+
+UPLOAD_DIR = ROOT_DIR / "uploads"
+UPLOAD_DIR.mkdir(exist_ok=True)
 
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -15,8 +22,6 @@ import jwt
 from datetime import datetime, timezone, timedelta
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional
-
-from fastapi.responses import PlainTextResponse
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
@@ -407,6 +412,18 @@ api_router.include_router(content_router)
 async def root():
     return {"message": "Bariatric Istanbul API - Cirugía Bariátrica en Turquía"}
 
+@api_router.post("/upload")
+async def upload_file(file: UploadFile = File(...), user: dict = Depends(get_current_user)):
+    ext = Path(file.filename).suffix.lower()
+    allowed = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.mp4', '.mov', '.avi', '.webm'}
+    if ext not in allowed:
+        raise HTTPException(status_code=400, detail=f"File type {ext} not allowed")
+    filename = f"{uuid.uuid4().hex}{ext}"
+    filepath = UPLOAD_DIR / filename
+    with open(filepath, "wb") as f:
+        shutil.copyfileobj(file.file, f)
+    return {"url": f"/api/uploads/{filename}", "filename": filename}
+
 @api_router.get("/sitemap.xml", response_class=PlainTextResponse)
 async def sitemap():
     base = "https://bariatricistanbul.com"
@@ -421,6 +438,7 @@ async def sitemap():
     return PlainTextResponse(content=xml, media_type="application/xml")
 
 app.include_router(api_router)
+app.mount("/api/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 
 app.add_middleware(
     CORSMiddleware,
@@ -513,14 +531,14 @@ async def startup_event():
 <h2>¿Por qué elegir Turquía para tu Manga Gástrica?</h2>
 <p>Turquía se ha convertido en el destino número uno mundial para cirugía bariátrica por varias razones:</p>
 <ul>
-<li><strong>Precios accesibles:</strong> Ahorra hasta un 70% comparado con España, México o Estados Unidos</li>
+<li><strong>Precios accesibles:</strong> Ahorra significativamente comparado con España, México o Estados Unidos</li>
 <li><strong>Cirujanos expertos:</strong> Médicos con formación internacional y miles de procedimientos exitosos</li>
 <li><strong>Hospitales de primera:</strong> Instalaciones acreditadas por JCI con tecnología de última generación</li>
 <li><strong>Paquetes todo incluido:</strong> Cirugía, hotel, traslados y cuidados posteriores incluidos</li>
 </ul>
 
-<h2>¿Cuánto cuesta la Manga Gástrica en Turquía?</h2>
-<p>Los paquetes todo incluido de manga gástrica en Estambul comienzan desde €3,500, incluyendo:</p>
+<h2>¿Qué incluye nuestro paquete todo incluido?</h2>
+<p>Nuestros paquetes de manga gástrica en Estambul incluyen todo lo necesario:</p>
 <ul>
 <li>Cirugía y anestesia</li>
 <li>Estancia hospitalaria en habitación privada</li>
@@ -529,12 +547,13 @@ async def startup_event():
 <li>Traductor personal</li>
 <li>12 meses de seguimiento</li>
 </ul>
+<p><strong>Contáctenos para recibir un presupuesto personalizado adaptado a sus necesidades.</strong></p>
 
 <h2>Resultados esperados</h2>
 <p>Los pacientes de manga gástrica típicamente pierden entre el 60-70% de su exceso de peso en los primeros 12-18 meses después de la cirugía.</p>""",
                 "image_url": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800",
-                "meta_title": "Manga Gástrica en Turquía 2024 | Precios, Procedimiento y Resultados",
-                "meta_description": "Guía completa sobre manga gástrica en Turquía. Precios desde €3,500. Cirujanos expertos, hospitales JCI, paquetes todo incluido. ¡Solicita tu consulta gratis!",
+                "meta_title": "Manga Gástrica en Turquía 2024 | Procedimiento y Resultados",
+                "meta_description": "Guía completa sobre manga gástrica en Turquía. Cirujanos expertos, hospitales JCI, paquetes todo incluido. ¡Solicita tu consulta gratis!",
                 "keywords": ["manga gástrica turquía", "manga gástrica estambul", "cirugía bariátrica turquía", "manga gástrica precio", "gastrectomía en manga"],
                 "published": True,
                 "created_at": datetime.now(timezone.utc)
@@ -574,11 +593,11 @@ async def startup_event():
                 "created_at": datetime.now(timezone.utc)
             },
             {
-                "title": "Precios de Cirugía Bariátrica en Turquía 2024",
-                "slug": "precios-cirugia-bariatrica-turquia",
-                "excerpt": "Guía actualizada de precios de cirugía bariátrica en Turquía. Manga gástrica, bypass gástrico y balón gástrico con paquetes todo incluido.",
-                "content": """<h2>¿Por qué los precios son más bajos en Turquía?</h2>
-<p>Los precios más accesibles no significan menor calidad. Turquía ofrece:</p>
+                "title": "Paquetes de Cirugía Bariátrica en Turquía 2024",
+                "slug": "paquetes-cirugia-bariatrica-turquia",
+                "excerpt": "Guía actualizada de paquetes de cirugía bariátrica en Turquía. Manga gástrica, bypass gástrico y balón gástrico con paquetes todo incluido.",
+                "content": """<h2>¿Por qué elegir Turquía para tu cirugía bariátrica?</h2>
+<p>Turquía ofrece una combinación única de calidad médica de primer nivel con costos accesibles:</p>
 <ul>
 <li>Menores costos operativos</li>
 <li>Tipo de cambio favorable</li>
@@ -586,16 +605,18 @@ async def startup_event():
 <li>Alto volumen de procedimientos (mayor experiencia)</li>
 </ul>
 
-<h2>Precios de Paquetes Todo Incluido 2024</h2>
+<h2>Nuestros Paquetes Todo Incluido</h2>
+<p>Cada paquete está diseñado para ofrecer la mejor experiencia posible:</p>
 <table>
-<tr><th>Procedimiento</th><th>Precio</th></tr>
-<tr><td>Manga Gástrica</td><td>Desde €3,500</td></tr>
-<tr><td>Bypass Gástrico</td><td>Desde €4,500</td></tr>
-<tr><td>Balón Gástrico</td><td>Desde €2,500</td></tr>
-<tr><td>Cirugía de Revisión</td><td>Consultar</td></tr>
+<tr><th>Procedimiento</th><th>Incluye</th></tr>
+<tr><td>Manga Gástrica</td><td>Paquete completo todo incluido</td></tr>
+<tr><td>Bypass Gástrico</td><td>Paquete completo todo incluido</td></tr>
+<tr><td>Balón Gástrico</td><td>Paquete completo todo incluido</td></tr>
+<tr><td>Cirugía de Revisión</td><td>Presupuesto personalizado</td></tr>
 </table>
+<p><strong>Contáctenos por WhatsApp o formulario para recibir su presupuesto personalizado sin compromiso.</strong></p>
 
-<h2>¿Qué incluye el paquete?</h2>
+<h2>¿Qué incluye cada paquete?</h2>
 <ul>
 <li>Consulta preoperatoria</li>
 <li>Todos los análisis y pruebas</li>
@@ -607,9 +628,9 @@ async def startup_event():
 <li>12 meses de seguimiento online</li>
 </ul>""",
                 "image_url": "https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=800",
-                "meta_title": "Precios Cirugía Bariátrica Turquía 2024 | Paquetes Todo Incluido",
-                "meta_description": "Precios actualizados de cirugía bariátrica en Turquía. Manga gástrica desde €3,500. Paquetes todo incluido con hotel 5 estrellas y traslados VIP.",
-                "keywords": ["precio manga gástrica turquía", "cirugía bariátrica precio", "cuanto cuesta operarse en turquía", "bypass gástrico precio turquía"],
+                "meta_title": "Paquetes Cirugía Bariátrica Turquía 2024 | Todo Incluido",
+                "meta_description": "Paquetes todo incluido de cirugía bariátrica en Turquía. Manga gástrica, bypass gástrico. Hotel 5 estrellas y traslados VIP. Solicita tu presupuesto.",
+                "keywords": ["paquete manga gástrica turquía", "cirugía bariátrica paquete", "operarse en turquía", "bypass gástrico turquía"],
                 "published": True,
                 "created_at": datetime.now(timezone.utc)
             }
