@@ -5,4 +5,4 @@ Allow: /blog/
 Disallow: /admin
 Disallow: /admin/
 
-Sitemap: https://bariatricistanbul.com/sitemap.xml
+Sitemap: https://bariatricistanbul.es/sitemap.xml
